@@ -114,7 +114,7 @@ public class ElasticSearchConsumer {
 
         ElasticsearchClient restClient = createESClient();
 
-        KafkaConsumer<String, String> consumer = createConsumer("wikimedia.recentchanges");
+        KafkaConsumer<String, String> consumer = createConsumer("wikimedia.recentchange");
 
         // create the wikipedia index
         String indexname = "wikipedia";
