@@ -10,7 +10,7 @@ services:
       - 9200:9200
 
   # http://localhost:5601/app/dev_tools#/console
-  # GET wikipedia/_search
+  # GET wikimedia/_search
   # {
   #   "query": {
   #     "match_all": {}

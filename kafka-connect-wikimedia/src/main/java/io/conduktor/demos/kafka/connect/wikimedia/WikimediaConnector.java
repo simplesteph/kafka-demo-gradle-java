@@ -1,4 +1,4 @@
-package io.conduktor.demos.kafka.connect.wikipedia;
+package io.conduktor.demos.kafka.connect.wikimedia;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.source.SourceConnector;
@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WikipediaConnector extends SourceConnector {
+public class WikimediaConnector extends SourceConnector {
 
     //static version for the connector
     public static String VERSION = "0.01";
@@ -32,14 +32,14 @@ public class WikipediaConnector extends SourceConnector {
     @Override
     public void start(Map<String, String> map) {
         // init the configs on start
-        topic = map.get(WikipediaConnector.TOPIC_CONFIG);
-        uri = map.get(WikipediaConnector.URL_CONFIG);
-        reconnectDuration = map.getOrDefault(WikipediaConnector.RECONNECT_TIME_CONFIG, "3000");
+        topic = map.get(WikimediaConnector.TOPIC_CONFIG);
+        uri = map.get(WikimediaConnector.URL_CONFIG);
+        reconnectDuration = map.getOrDefault(WikimediaConnector.RECONNECT_TIME_CONFIG, "3000");
     }
 
     @Override
-    public Class<WikipediaTask> taskClass() {
-        return WikipediaTask.class;
+    public Class<WikimediaTask> taskClass() {
+        return WikimediaTask.class;
     }
 
     @Override

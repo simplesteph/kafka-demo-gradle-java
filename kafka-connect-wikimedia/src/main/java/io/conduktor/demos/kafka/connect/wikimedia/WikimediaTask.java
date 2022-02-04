@@ -1,4 +1,4 @@
-package io.conduktor.demos.kafka.connect.wikipedia;
+package io.conduktor.demos.kafka.connect.wikimedia;
 
 
 import com.launchdarkly.eventsource.MessageEvent;
@@ -13,7 +13,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
-public class WikipediaTask extends SourceTask {
+public class WikimediaTask extends SourceTask {
 
     private EventProcessor processor;
     private BlockingQueue<SourceRecord> queue;
@@ -24,16 +24,16 @@ public class WikipediaTask extends SourceTask {
      */
     @Override
     public String version() {
-        return WikipediaConnector.VERSION;
+        return WikimediaConnector.VERSION;
     }
 
     @Override
     public void start(Map<String, String> map) {
 
         //get all configs and store it in local variables
-        String topic = map.get(WikipediaConnector.TOPIC_CONFIG);
-        String uri = map.get(WikipediaConnector.URL_CONFIG);
-        Duration reconnectDuration = Duration.ofMillis(Integer.parseInt(map.get(WikipediaConnector.RECONNECT_TIME_CONFIG)));
+        String topic = map.get(WikimediaConnector.TOPIC_CONFIG);
+        String uri = map.get(WikimediaConnector.URL_CONFIG);
+        Duration reconnectDuration = Duration.ofMillis(Integer.parseInt(map.get(WikimediaConnector.RECONNECT_TIME_CONFIG)));
 
         // initiate a new processor
         processor = new EventProcessor(uri) {
@@ -46,7 +46,7 @@ public class WikipediaTask extends SourceTask {
             protected void onEvent(String event, MessageEvent messageEvent) {
                 //each event will be added to stash
                 queue.add(new SourceRecord(
-                        Collections.singletonMap("source", "wikipedia"),
+                        Collections.singletonMap("source", "wikimedia"),
                         Collections.singletonMap("offset", 0),
                         topic,
                         Schema.STRING_SCHEMA,

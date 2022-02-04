@@ -1,4 +1,4 @@
-package io.conduktor.demos.kafka.connect.wikipedia;
+package io.conduktor.demos.kafka.connect.wikimedia;
 
 import com.launchdarkly.eventsource.MessageEvent;
 import org.apache.kafka.clients.producer.KafkaProducer;

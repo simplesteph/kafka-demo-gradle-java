@@ -116,8 +116,8 @@ public class ElasticSearchConsumer {
 
         KafkaConsumer<String, String> consumer = createConsumer("wikimedia.recentchange");
 
-        // create the wikipedia index
-        String indexname = "wikipedia";
+        // create the wikimedia index
+        String indexname = "wikimedia";
         if (!restClient.indices().exists(c -> c.index(indexname)).value()) {
             restClient.indices().create(c -> c.index(indexname));
         }
