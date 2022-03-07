@@ -27,7 +27,7 @@ public class ProducerDemoWithCallback {
         for (int i=0; i<10; i++ ) {
             // create a producer record
             ProducerRecord<String, String> producerRecord =
-                    new ProducerRecord<String, String>("demo_java", "hello world " + Integer.toString(i));
+                    new ProducerRecord<String, String>("demo_java", "hello world " + i);
 
             // send data - asynchronous
             producer.send(producerRecord, new Callback() {
