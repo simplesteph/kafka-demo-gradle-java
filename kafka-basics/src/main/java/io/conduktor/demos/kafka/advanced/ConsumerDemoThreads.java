@@ -1,4 +1,4 @@
-package kafka.advanced;
+package io.conduktor.demos.kafka.advanced;
 
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.ProducerConfig;

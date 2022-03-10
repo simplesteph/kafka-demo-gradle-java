@@ -1,4 +1,4 @@
-package kafka.advanced;
+package io.conduktor.demos.kafka.advanced;
 
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.KafkaConsumer;

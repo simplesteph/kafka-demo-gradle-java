@@ -1,9 +1,6 @@
-package kafka;
+package io.conduktor.demos.kafka.advanced;
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
@@ -13,11 +10,11 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 
-public class ConsumerDemo {
-    private static final Logger log = LoggerFactory.getLogger(ConsumerDemo.class.getSimpleName());
+public class ConsumerDemoRebalanceListener {
+    private static final Logger log = LoggerFactory.getLogger(ConsumerDemoRebalanceListener.class);
 
     public static void main(String[] args) {
-        log.info("I am a Kafka Consumer");
+        log.info("I am a Kafka Consumer with a Rebalance");
 
         String bootstrapServers = "127.0.0.1:9092";
         String groupId = "my-fifth-application";
@@ -31,8 +28,13 @@ public class ConsumerDemo {
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
+        // we disable Auto Commit of offsets
+        properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+
         // create consumer
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
+
+        ConsumerRebalanceListenerImpl listener = new ConsumerRebalanceListenerImpl(consumer);
 
         // get a reference to the current thread
         final Thread mainThread = Thread.currentThread();
@@ -53,9 +55,8 @@ public class ConsumerDemo {
         });
 
         try {
-
             // subscribe consumer to our topic(s)
-            consumer.subscribe(Arrays.asList(topic));
+            consumer.subscribe(Arrays.asList(topic), listener);
 
             // poll for new data
             while (true) {
@@ -65,18 +66,26 @@ public class ConsumerDemo {
                 for (ConsumerRecord<String, String> record : records) {
                     log.info("Key: " + record.key() + ", Value: " + record.value());
                     log.info("Partition: " + record.partition() + ", Offset:" + record.offset());
-                }
-            }
 
+                    // we track the offset we have been committed in the listener
+                    listener.addOffsetToTrack(record.topic(), record.partition(), record.offset());
+                }
+
+                // We commitAsync as we have processed all data and we don't want to block until the next .poll() call
+                consumer.commitAsync();
+            }
         } catch (WakeupException e) {
             log.info("Wake up exception!");
             // we ignore this as this is an expected exception when closing a consumer
         } catch (Exception e) {
             log.error("Unexpected exception", e);
         } finally {
-            consumer.close(); // this will also commit the offsets if need be.
-            log.info("The consumer is now gracefully closed.");
+            try {
+                consumer.commitSync(listener.getCurrentOffsets()); // we must commit the offsets synchronously here
+            } finally {
+                consumer.close();
+                log.info("The consumer is now gracefully closed.");
+            }
         }
-
     }
 }

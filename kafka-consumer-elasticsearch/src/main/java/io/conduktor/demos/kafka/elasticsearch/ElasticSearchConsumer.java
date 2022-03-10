@@ -36,6 +36,21 @@ public class ElasticSearchConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticSearchConsumer.class.getSimpleName());
 
+
+    public static ElasticsearchClient createESClient() {
+
+        RestClient restClient = createRestClient();
+
+        // Create the transport with a Jackson mapper
+        ElasticsearchTransport transport = new RestClientTransport(
+                restClient, new JacksonJsonpMapper());
+
+        // And create the API client
+        return new ElasticsearchClient(transport);
+
+    }
+
+
     public static RestClient createRestClient() {
 
         // replace with your own credentials if you use BONSAI for example
@@ -70,19 +85,6 @@ public class ElasticSearchConsumer {
             return builder.build();
 
         }
-    }
-
-    public static ElasticsearchClient createESClient() {
-
-        RestClient restClient = createRestClient();
-
-        // Create the transport with a Jackson mapper
-        ElasticsearchTransport transport = new RestClientTransport(
-                restClient, new JacksonJsonpMapper());
-
-        // And create the API client
-        return new ElasticsearchClient(transport);
-
     }
 
     public static KafkaConsumer<String, String> createConsumer(String topic) {
